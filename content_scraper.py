@@ -59,4 +59,29 @@ def get_frequencies(words):
 		sorted_freq_dict[max_f_word] = max_f
 		word_freq_dict[max_f_word] = 0
 
-	return sorted_freq_dict
+	filtered_sorted_freq = filter_irrelevant(sorted_freq_dict)
+
+	return filtered_sorted_freq
+
+def filter_irrelevant(words):
+	irrelevant_dict = ['the', 'a', 'and', 'or', 'for', 'how', 'with', 'have', 'an', 'want', 'what', 'on', 'but', 'nor', 'yet', 'so', 'he', 'she', 'to', 'be', 'of', 'which', 'his', 'hers', 'her', 'him', 'there', 'their', 'they', 'me', 'go', 'can', 'like', 'i', 'it', 'that', 'your', 'you']
+	irrelevant_dict += [i[0].upper()+i[1:len(i)] for i in irrelevant_dict]
+
+	new_dict = {}
+
+	for i in words:
+		if i in irrelevant_dict:
+			continue
+		new_dict[i] = words.get(i)
+
+	return new_dict
+
+def most_common(sorted_words, n):
+	sliced_dict = {}
+	counter = 0
+	for i in sorted_words:
+		counter += 1
+		sliced_dict[i] = sorted_words.get(i)
+
+		if counter > n-1:
+			return sliced_dict

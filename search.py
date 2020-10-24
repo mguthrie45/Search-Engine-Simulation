@@ -7,12 +7,21 @@ db = sqlite3.connect('web.db')
 cursor = db.cursor()
 
 def init_db():
-	cursor.execute("CREATE TABLE IF NOT EXISTS sites (url text, content text)")
+	cursor.execute("CREATE TABLE IF NOT EXISTS sites (url TEXT, content TEXT, keywords TEXT)")
 	db.commit()
 
-def insert_data(url, content):
-	cursor.execute("INSERT INTO sites (url, content) VALUES (?, ?)", (url, content))
+def insert_new_website(url, content):
+	cursor.execute("INSERT INTO sites (url, content, keywords) VALUES (?, ?, '')", (url, content))
 	db.commit()
+
+def update_keywords(url, words):
+	parsed_dict = ""
+	for i in words:
+		parsed_dict += i + " " + str(words[i]) + " "
+	cursor.execute("UPDATE sites SET keywords=? WHERE url=?", (parsed_dict, url))
+	db.commit()
+
+def close_db():
 	cursor.close()
 	db.close()
 
@@ -21,4 +30,4 @@ init_db()
 url = "https://www.crazyegg.com/blog/homepage-design/"
 content = get_content(url)
 words = get_words(content)
-print(get_frequencies(words))
+polished_words = most_common(get_frequencies(words), 75)
