@@ -56,7 +56,7 @@ def get_frequencies(words):
 			if word_freq_dict[j] > max_f:
 				max_f_word = j
 				max_f = word_freq_dict[j]
-		sorted_freq_dict[max_f_word] = word_freq_dict[j]
-		word_freq_dict[j] = 0
+		sorted_freq_dict[max_f_word] = max_f
+		word_freq_dict[max_f_word] = 0
 
 	return sorted_freq_dict
