@@ -91,7 +91,9 @@ def n_most_relevant(n, search_words):
 	keyword_relations = get_keyword_relations(search_words)
 	weightings = get_weightings(keyword_relations)
 
-	return weightings
+	sorted_weightings = {url: weight for url, weight in sorted(weightings.items(), key=lambda item: item[1], reverse=True)[:n]}
+
+	return sorted_weightings
 
 
 
@@ -119,6 +121,7 @@ def add_urls(url_list):
 		add_row(url)
 
 
+print(n_most_relevant(3, ['Cheeseburger', 'recipe']))
 
 
 
