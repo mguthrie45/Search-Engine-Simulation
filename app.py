@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 import search as Searcher
+import content_scraper as Scraper
 import sqlite3
 
 url_list = ["https://www.crazyegg.com/blog/homepage-design/",
@@ -15,7 +16,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def main():
-	return render_template('index.html', urls=[])
+	return render_template('index.html', info=[])
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
@@ -27,8 +28,13 @@ def search():
 	if search_input != False:
 		print(search_input)
 		search_words = search_input.split()
-		urls = Searcher.n_most_relevant(cursor, 3, search_words)
-		return render_template('index.html', urls=urls)
+		urls = list(Searcher.n_most_relevant(cursor, 3, search_words))
+		print(urls)
+		titles = [Searcher.get_title_from_db(cursor, url) for url in urls]
+
+		info = [(urls[i], titles[i]) for i in range(len(urls))]
+
+		return render_template('index.html', info=info)
 	return redirect(url_for('main'))
 
 if __name__ == '__main__':

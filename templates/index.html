@@ -2,18 +2,110 @@
 <html>
 	<head>
 		<title>Search Engine Simulation</title>
-		<style></style>
+		<style>
+			body {
+				padding-left: 15%;
+				padding-right: 15%;
+				background-color: #e0e0e0;
+				font-family: "arial";
+			}
+
+			#main {
+				margin-bottom: 20px;
+				width: 100%;
+				padding-top: 20px;
+				padding-bottom: 20px;
+				height: 100px;
+				background-color: white;
+			}
+
+			#search {
+				width: 88%;
+				height: 40px;
+				border: 1px solid #5e5e5e;
+				border-right: none;
+				font-family: arial;
+				font-size: 18px;
+				padding-left: 10px;
+				display: inline-flex;
+				position: relative;
+				top: -16px;
+			}
+
+			#searchbar {
+				height: 40%;
+				min-width: 400px;
+				max-width: 700px;
+				position: relative;
+				transform: translate(-50%, -50%);
+				top: 50%;
+				left: 50%;
+			}
+			
+			#submit {
+				width: 44px;
+				height: 44px;
+				border: 1px solid #5e5e5e;
+				border-left: none;
+				display: inline-flex;
+				top: 12px;
+			}
+			#submit:hover {
+				cursor: pointer;
+			}
+
+			.result {
+				padding-left: 20px;
+				padding-top: 30px;
+				padding-bottom: 30px;
+				background-color: white;
+				color: blue;
+				text-decoration: none;
+				text-align: left;
+				display: block;
+				margin-bottom: 4px;
+			}
+			.cont {
+				width: fit-content;
+				height: 100%;
+				max-width: 70%;
+			}
+
+			.link {
+				text-decoration: none;
+				font-size: 20px;
+			}
+			.url {
+				margin-top: 2px;
+				font-size: 14px;
+				color: #4a4a4a;
+			}
+			.descr {
+				color: #202020;
+				font-size: 14px;
+			}
+
+		</style>
 	</head>
 	<body>
 		
 		<form id='main' action='/search' method='POST'>
-			<input id='search' placeholder='Search' type='text' name='search'>
-			<input id='submit' type='submit' name='submission' value='Search'>
+			<div id='searchbar'>
+				<div style='height: 100%; width: 75%; margin: auto;'>
+					<input id='search' placeholder='Search' type='text' name='search'><input id='submit' type='submit' name='submission' value=''>
+				</div>
+			</div>
 		</form>
 
 		<div id='results'>
-			{%for i in urls%}
-				<span>{{i}}</span>
+			{%for i in info%}
+				<div class='result'>
+					<div class='cont'>
+						<a class='link' href={{i[0]}}>{{i[1]}}</a>
+						<p class='url'>{{i[0]}}</p>
+						<p class='descr'>This is a description. As of the current moment, I do not know how to parse a webpage's contents to compose a description, but I will figure it out. I'll probably use one of those machine-learning driven summarizers to do the trick for me lol.</p>
+					</div>
+				</div>
 			{%endfor%}
 		</div>
 

@@ -38,6 +38,13 @@ def get_words(content):
 
 	return parsed_text_list
 
+def get_title(url):
+	content = get_content(url)
+
+	soup = BeautifulSoup(content, 'html5lib')
+	title = soup.find('title').get_text()
+	return title
+
 def get_frequencies(words):
 	word_freq_dict = {}
 
