@@ -2,11 +2,18 @@ from bs4 import BeautifulSoup
 import requests
 
 def get_content(url):
-	r1 = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
-	if r1.status_code == 403:
-		raise Exception(f"Forbidden HTTP Request Error 403.\n request for: {url} \n Change request header.")
+	if url:
+		try:
+			r1 = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
+			if r1.status_code == 403:
+				raise Exception(f"Forbidden HTTP Request Error 403.\n request for: {url} \n Change request header.")
+			return r1.content
+		except requests.exceptions.ConnectionError:
+			return "Connection refused"
+		except requests.exceptions.InvalidURL:
+			return "Unmeaningful URL"
 
-	return r1.content
+	return None
 
 
 def get_words(content):
@@ -32,26 +39,63 @@ def get_words(content):
 	content_list.append(''.join([i.get_text() for i in h5_content])+" ")
 	content_list.append(''.join([i.get_text() for i in h6_content])+" ")
 	content_list.append(''.join([i.get_text() for i in span_content])+" ")
-	content_list.append(title_content.get_text()+" ")
+	if title_content:
+		content_list.append(title_content.get_text()+" ")
 
 	parsed_text = ''.join(content_list)
 	parsed_text_list = parsed_text.split()
 
 	return parsed_text_list
 
+def get_a_tags(url):
+	content = get_content(url)
+
+	soup = BeautifulSoup(content, 'html5lib')
+	links = soup.find_all('a')
+
+	url_list = []
+	for atag in links:
+		if 'href' not in atag.attrs:
+			continue
+		link = atag['href']
+		final_url = link
+		if link:
+			if 'https://' not in link and 'http://' not in link:
+				if '//www.' in link:
+					final_url = 'http:'+link
+				elif link[0:2] == '//':
+					if url[len(url)-1:] == '/':
+						final_url = url+link[2:]
+					else:
+						final_url = url+link	
+				elif link == '#' or link == '':
+					final_url = url
+				else:
+					final_url = url+link
+			url_list.append(final_url)
+
+	#url_list = [i['href'] for i in links]
+	return url_list
+
 
 def get_title(url):
 	content = get_content(url)
 
 	soup = BeautifulSoup(content, 'html5lib')
-	title = soup.find('title').get_text()
-	return title
+
+	title = soup.find('title')
+	if title:
+		return title.get_text()
+	return ''
 
 def get_meta_descr(url):
 	content = get_content(url)
 
 	soup = BeautifulSoup(content, 'html5lib')
 	meta_descr = soup.find('meta', attrs={'name': 'description'})
+
+	if meta_descr is None:
+		return ''
 
 	return meta_descr['content']
 

@@ -28,7 +28,7 @@ def search():
 	if search_input != False:
 		print(search_input)
 		search_words = search_input.split()
-		urls = list(Searcher.n_most_relevant(cursor, 3, search_words))
+		urls = list(Searcher.n_most_relevant(cursor, 10, search_words))
 		print(urls)
 		titles = [Searcher.get_title_from_db(cursor, url) for url in urls]
 		descrs = [Scraper.get_meta_descr(url) for url in urls]

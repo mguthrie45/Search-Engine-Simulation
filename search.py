@@ -2,7 +2,7 @@ import sqlite3
 from content_scraper import *
 
 def init_db(db, cursor):
-	cursor.execute("CREATE TABLE IF NOT EXISTS sites (url TEXT, title TEXT, content TEXT, keywords TEXT)")
+	cursor.execute("CREATE TABLE IF NOT EXISTS sites (url TEXT, title TEXT, content TEXT, keywords TEXT, UNIQUE(url))")
 	db.commit()
 
 
@@ -26,6 +26,8 @@ def add_row(db, cursor, url):
 	title = get_title(url)
 	polished_words = most_common(get_frequencies(words), 75)
 
+	if content == 'Connection refused.':
+		return None
 	insert_new_website(db, cursor, url, title, content)
 	update_keywords(db, cursor, url, polished_words)
 
@@ -102,7 +104,10 @@ def n_most_relevant(cursor, n, search_words):
 	keyword_relations = get_keyword_relations(cursor, search_words)
 	weightings = get_weightings(keyword_relations)
 
-	sorted_weightings = {url: weight for url, weight in sorted(weightings.items(), key=lambda item: item[1], reverse=True)[:n]}
+	sorted_list = sorted(weightings.items(), key=lambda item: item[1], reverse=True)
+	if len(sorted_list) >= n:
+		sorted_list = sorted_list[:n]
+	sorted_weightings = {url: weight for url, weight in sorted_list}
 
 	return sorted_weightings
 
