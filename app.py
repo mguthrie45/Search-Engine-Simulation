@@ -31,8 +31,9 @@ def search():
 		urls = list(Searcher.n_most_relevant(cursor, 3, search_words))
 		print(urls)
 		titles = [Searcher.get_title_from_db(cursor, url) for url in urls]
+		descrs = [Scraper.get_meta_descr(url) for url in urls]
 
-		info = [(urls[i], titles[i]) for i in range(len(urls))]
+		info = [(urls[i], titles[i], descrs[i]) for i in range(len(urls))]
 
 		return render_template('index.html', info=info)
 	return redirect(url_for('main'))

@@ -8,6 +8,7 @@ def get_content(url):
 
 	return r1.content
 
+
 def get_words(content):
 	soup = BeautifulSoup(content, 'html5lib')
 
@@ -38,12 +39,22 @@ def get_words(content):
 
 	return parsed_text_list
 
+
 def get_title(url):
 	content = get_content(url)
 
 	soup = BeautifulSoup(content, 'html5lib')
 	title = soup.find('title').get_text()
 	return title
+
+def get_meta_descr(url):
+	content = get_content(url)
+
+	soup = BeautifulSoup(content, 'html5lib')
+	meta_descr = soup.find('meta', attrs={'name': 'description'})
+
+	return meta_descr['content']
+
 
 def get_frequencies(words):
 	word_freq_dict = {}
@@ -72,6 +83,7 @@ def get_frequencies(words):
 		return filtered_sorted_freq
 	return {}
 
+
 def filter_irrelevant(words):
 	irrelevant_dict = ['the', 'a', 'and', 'or', 'for', 'how', 'with', 'have', 'an', 'want', 'what', 'on', 'but', 'nor', 'yet', 'so', 'he', 'she', 'to', 'be', 'of', 'which', 'his', 'hers', 'her', 'him', 'there', 'their', 'they', 'me', 'go', 'can', 'like', 'i', 'it', 'that', 'your', 'you']
 	irrelevant_dict += [i[0].upper()+i[1:len(i)] for i in irrelevant_dict]
@@ -86,6 +98,7 @@ def filter_irrelevant(words):
 
 		return new_dict
 	return {}
+
 
 def most_common(sorted_words, n):
 	sliced_dict = {}
