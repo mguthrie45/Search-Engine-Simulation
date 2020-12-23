@@ -104,12 +104,22 @@ def n_most_relevant(cursor, n, search_words):
 	keyword_relations = get_keyword_relations(cursor, search_words)
 	weightings = get_weightings(keyword_relations)
 
+	db = sqlite3.connect('web.db')
+	cursor = db.cursor()
+
 	sorted_list = sorted(weightings.items(), key=lambda item: item[1], reverse=True)
 	if len(sorted_list) >= n:
 		sorted_list = sorted_list[:n]
 	sorted_weightings = {url: weight for url, weight in sorted_list}
 
-	return sorted_weightings
+	cleaned_sorted_weightings = {}
+	for i in sorted_weightings:
+		title_descr_i = get_title_from_db(cursor, i)+get_meta_descr(i)
+		title_descrs = list(map(lambda x: get_title_from_db(cursor, x)+get_meta_descr(x), cleaned_sorted_weightings))
+		if title_descr_i not in title_descrs:
+			cleaned_sorted_weightings[i] = sorted_weightings.get(i)
+	print(cleaned_sorted_weightings)
+	return cleaned_sorted_weightings
 
 
 def close_db():
